@@ -34,8 +34,6 @@ public class MainPage {
 				case 2:
 
 					System.out.println("Sign Up");
-					LogInController login = new LogInController();
-					login.handleSignUp();
 					choice = 3;
 					break;
 				case 3:

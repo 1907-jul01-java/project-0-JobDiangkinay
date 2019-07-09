@@ -1,7 +1,5 @@
 package com.revature.controller;
 
-import java.util.Scanner;
-
 import com.revature.models.Employee;
 import com.revature.models.UserAccount;
 import com.revature.views.MainPage;
@@ -26,21 +24,5 @@ public class LogInController {
 
 	}
 	
-	public void handleSignUp()
-	{
-		try (Scanner scan = new Scanner(System.in)){
-		System.out.println("Open an account");
-		System.out.println("User Name");
-		String userName = scan.nextLine();
-		System.out.println("Password");
-		// put isUserNameValid method
-		String password = scan.nextLine();
-		System.out.println("First Name");
-		String firstName = scan.nextLine();
-		System.out.println("Last Name");
-		String lastName = scan.nextLine();
-		System.out.println("Initial Deposit");
-		double deposit = scan.nextDouble();
-		}
-	}
+
 }
