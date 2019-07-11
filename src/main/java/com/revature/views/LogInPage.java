@@ -24,24 +24,8 @@ public class LogInPage {
 		System.out.println("User Name:");
 		String userName = scan.nextLine();
 		System.out.println("Password:");
-		String lastName = scan.nextLine();
-
-		for (Employee p : employees) {
-			if (userName.equals(p.getUserName()) && lastName.equals(p.getPassword())) {
-				checkUser = true;
-				isEmployee = true;
-				curEmployee = p;
-			}
-		}
-		if (!isEmployee) {
-			for (UserAccount p : users) {
-				if (userName.equals(p.getUserName()) && lastName.equals(p.getPassword())) {
-					checkUser = true;
-					curUser = p;
-				}
-			}
-		}
-		logIn.acceptLogIn(checkUser, isEmployee, curUser, curEmployee);
+		String password = scan.nextLine();
+		logIn.logInChecker(userName, password);
 	}
 
 }

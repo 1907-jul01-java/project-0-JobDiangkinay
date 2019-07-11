@@ -52,6 +52,26 @@ public class UserAccountsDao implements Dao<UserAccount> {
 
 	}
 
+	public boolean isValidLogin(String username, String password) {
+		int i = 0;
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from accountcredentials where username = ? and password = ?");
+			pStatement.setString(1, username);
+			pStatement.setString(2, password);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				i++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if (i == 1) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public List<UserAccount> getAll() {
 		UserAccount user;
@@ -79,12 +99,6 @@ public class UserAccountsDao implements Dao<UserAccount> {
 	}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void delete(String e) {
 		try {
 			PreparedStatement pStatement = connection
@@ -109,6 +123,24 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			ex.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void depositAmount(double depAmount, String accountNumber) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("update bankaccounts set balance = ? where accountnumber = ? ");
+			pStatement.setDouble(1, depAmount);
+			pStatement.setString(2, accountNumber);
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public UserAccountsDao(Connection connection) {
