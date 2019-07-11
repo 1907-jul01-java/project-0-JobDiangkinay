@@ -8,7 +8,7 @@ public class UserAccount extends Person {
 
 	public UserAccount(String firstName, String lastName, String phoneNumber, String userName, String password,
 			String accountNumber, double balance) {
-		super(firstName, lastName, phoneNumber, "User");
+		super(firstName, lastName, phoneNumber, "USER");
 		this.userName = userName;
 		this.password = password;
 		this.accountNumber = accountNumber;

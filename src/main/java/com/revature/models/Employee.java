@@ -15,6 +15,13 @@ public class Employee extends Person {
 		return userName;
 	}
 
+	@Override
+	public String toString() {
+		return "Employee [userName=" + userName + ", password=" + password + ", UserType=" + getUserType()
+				+ ", FirstName=" + getFirstName() + ", LastName=" + getLastName() + ", PhoneNumber="
+				+ getPhoneNumber() + "]";
+	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
