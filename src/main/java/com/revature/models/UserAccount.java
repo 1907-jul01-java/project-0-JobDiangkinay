@@ -14,6 +14,13 @@ public class UserAccount extends Person {
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 	}
+	
+	public UserAccount(String userName, String accountNumber,double balance) {
+		super();
+		this.userName = userName;
+		this.accountNumber = accountNumber;
+		this.balance = balance;
+	}
 
 	public String getUserName() {
 		return userName;

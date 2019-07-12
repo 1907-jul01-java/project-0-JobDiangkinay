@@ -12,6 +12,10 @@ public class Person {
 		this.phoneNumber = phoneNumber;
 		this.userType = userType;
 	}
+	
+	public Person() {
+		
+	}
 
 	public String getUserType() {
 		return userType;

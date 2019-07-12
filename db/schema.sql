@@ -16,8 +16,8 @@ create table Persons (
 );
 create table BankAccounts (
 	bID serial primary key,
-	AccountNumber char(9) unique not null,
-	Balance real,
+	AccountNumber char(9) not null,
+	Balance numeric(10,2),
 	UserName varchar not null
 );
 insert into AccountCredentials(UserName, Password, UserType) values ('adminjob', 'passjob', 'ADMIN');
@@ -32,3 +32,8 @@ insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('JobEmp'
 insert into AccountCredentials(UserName, Password, UserType) values ('userjob', 'passjob', 'USER');
 insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('JobUser', 'DiangkinayUser', '9494909895', 'userjob');
 insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456789', 500, 'userjob');
+insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456787', 1500, 'userjob');
+
+insert into AccountCredentials(UserName, Password, UserType) values ('userkeith', 'passuserkeith', 'USER');
+insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('KeithUser', 'TorresUser', '9052875395', 'userkeith');
+insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456788', 500, 'userkeith');

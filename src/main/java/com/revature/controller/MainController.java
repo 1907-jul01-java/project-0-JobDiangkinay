@@ -4,24 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.revature.entities.EmployeeDao;
+import com.revature.entities.UserAccountsDao;
 import com.revature.models.Employee;
 import com.revature.models.UserAccount;
+import com.revature.utilities.ConnectionUtil;
 import com.revature.utilities.PersonDataUtil;
 import com.revature.views.MainPage;
 
 public class MainController {
 	ArrayList<UserAccount> persons = PersonDataUtil.loadAccounts();
 	ArrayList<UserAccount> pendingAccounts = PersonDataUtil.loadPendingAccounts();
-
-	public void showUserInfo(UserAccount user) {
-		MainPage userMenu = new MainPage();
-		System.out.println("User Info:");
-		System.out.println("Account Number: " + user.getAccountNumber());
-		System.out.println("Name: " + user.getFirstName() + " " + user.getLastName());
-		System.out.println("Available Funds: " + user.getBalance());
-		pressContinue();
-		userMenu.runUserPage(user);
-	}
+	ConnectionUtil connectionUtil = new ConnectionUtil();
+	UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
 
 	public void showUserList(Employee curUser) {
 		MainPage userMenu = new MainPage();
@@ -116,11 +111,10 @@ public class MainController {
 			}
 		}
 		if (user != null) {
-			try (Scanner scan2 = new Scanner(System.in)){
+			try (Scanner scan2 = new Scanner(System.in)) {
 				System.out.println("Cancel Account? (Y,N): ");
 			}
-		}
-		else {
+		} else {
 			System.out.println("Account Not Found");
 			empMenu.runEmployeePage(curEmp);
 		}

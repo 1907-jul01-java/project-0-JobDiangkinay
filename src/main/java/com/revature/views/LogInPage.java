@@ -15,10 +15,6 @@ public class LogInPage {
 	LogInController logIn = new LogInController();
 
 	public void runLogIn() {
-		boolean checkUser = false;
-		boolean isEmployee = false;
-		Employee curEmployee = null;
-		UserAccount curUser = null;
 
 		System.out.println("Log In");
 		System.out.println("User Name:");

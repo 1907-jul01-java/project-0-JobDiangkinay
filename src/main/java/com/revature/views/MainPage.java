@@ -1,10 +1,8 @@
 package com.revature.views;
 
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.revature.controller.LogInController;
 import com.revature.controller.MainController;
 import com.revature.models.Employee;
 import com.revature.models.UserAccount;
@@ -51,51 +49,14 @@ public class MainPage {
 
 	public void runEmployeePage(Employee user) {
 		System.out.println("Welcome " + user.getFirstName() + " !");
-		if (user.getUserType().equals("Admin")) {
+		if (user.getUserType().equals("ADMIN")) {
 			adminMain(user);
-		} else if (user.getUserType().equals("Employee")) {
+		} else if (user.getUserType().equals("EMPLOYEE")) {
 			employeeMain(user);
 		}
 	}
 
-	public void runUserPage(UserAccount user) {
-		System.out.println("Welcome " + user.getFirstName() + " !");
-		System.out.println("Account Number: " + user.getAccountNumber());
-		int choice = 0;
-		while (choice != 5) {
-			System.out.println("1. Show User Info:\n2. Deposit\n3. Withdraw\n4. Transfer\n5. LogOut");
-			System.out.print("Choice: ");
-			Scanner scan = new Scanner(System.in);
-			try {
-				choice = scan.nextInt();
-				switch (choice) {
-				case 1:
-					choice = 3;
-					mainCtrl.showUserInfo(user);
-					break;
-				case 2:
-					// Deposit function
-					choice = 3;
-					break;
-				case 3:
-					// Withdraw function
-					break;
-				case 4:
-					// Transfer function
-					break;
-				case 5:
-					System.out.println("Successfully Logged Out");
-					openingPage(0);
-					scan.close();
-					break;
-				default:
-					System.out.println("Invalid Input \n\n");
-				}
-			} catch (Exception ex) {
-				System.out.println("Invalid Input \n\n");
-			}
-		}
-	}
+	
 
 	public void adminMain(Employee user) {
 		int choice = 0;

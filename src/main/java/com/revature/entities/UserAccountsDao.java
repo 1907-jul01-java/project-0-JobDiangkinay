@@ -72,6 +72,27 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		return false;
 	}
 
+	public String getUserType(String username) {
+		String result = null;
+		int i = 0;
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from accountcredentials where username = ?");
+			pStatement.setString(1, username);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				result = resultSet.getString("usertype");
+				i++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if (i == 1) {
+			return result;
+		}
+		return null;
+	}
+
 	@Override
 	public List<UserAccount> getAll() {
 		UserAccount user;
@@ -96,6 +117,91 @@ public class UserAccountsDao implements Dao<UserAccount> {
 
 		}
 		return users;
+	}
+
+	public UserAccount getUser(String curUserName) {
+		UserAccount curUser = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from persons join accountcredentials on persons.username = accountcredentials.username join bankaccounts on persons.username = bankaccounts.username where accountcredentials.username = ?");
+			pStatement.setString(1, curUserName);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String firstName = resultSet.getString("firstname");
+				String lastName = resultSet.getString("lastname");
+				String phoneNumber = resultSet.getString("phonenumber");
+				String username = resultSet.getString("username");
+				String password = resultSet.getString("password");
+				double balance = resultSet.getDouble("balance");
+				String accountNumber = resultSet.getString("accountnumber");
+
+				curUser = new UserAccount(firstName, lastName, phoneNumber, username, password, accountNumber, balance);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		if (curUser != null) {
+			return curUser;
+		}
+		return null;
+	}
+
+	public ArrayList<UserAccount> getUserBankAccounts(String curUserName) {
+		ArrayList<UserAccount> bankAccounts = new ArrayList<>();
+		try {
+			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where username = ?");
+			pStatement.setString(1, curUserName);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String username = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				String accountNumber = resultSet.getString("accountnumber");
+
+				bankAccounts.add(new UserAccount(username, accountNumber, balance));
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return bankAccounts;
+	}
+	
+	public UserAccount getSpecificBankAccount(String curUserName, String curAccountNumber) {
+		UserAccount curUser = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where username = ? and accountnumber = ?");
+			pStatement.setString(1, curUserName);
+			pStatement.setString(2, curAccountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String username = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				String accountNumber = resultSet.getString("accountnumber");
+
+				curUser = new UserAccount(username, accountNumber, balance);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return curUser;
+	}
+	
+	public UserAccount getBankAccount(String curAccountNumber) {
+		UserAccount curUser = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where accountnumber = ?");
+			pStatement.setString(1, curAccountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String username = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				String accountNumber = resultSet.getString("accountnumber");
+
+				curUser = new UserAccount(username, accountNumber, balance);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return curUser;
 	}
 
 	@Override

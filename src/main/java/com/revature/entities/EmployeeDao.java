@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.revature.models.Employee;
+import com.revature.models.UserAccount;
 
 public class EmployeeDao implements Dao<Employee> {
 	Connection connection;
@@ -65,6 +66,32 @@ public class EmployeeDao implements Dao<Employee> {
 
 		}
 		return employees;
+	}
+	
+	public Employee getEmployee(String curUserName) {
+		Employee curEmp = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from persons join accountcredentials on persons.username = accountcredentials.username where accountcredentials.username = ?");
+			pStatement.setString(1, curUserName);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String firstName = resultSet.getString("firstname");
+				String lastName = resultSet.getString("lastname");
+				String phoneNumber = resultSet.getString("phonenumber");
+				String username = resultSet.getString("username");
+				String password = resultSet.getString("password");
+				String userType = resultSet.getString("usertype");
+
+				curEmp = new Employee(firstName, lastName, phoneNumber, username, password, userType);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		if (curEmp != null) {
+			return curEmp;
+		}
+		return null;
 	}
 
 	@Override
