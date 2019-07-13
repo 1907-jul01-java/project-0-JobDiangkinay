@@ -2,33 +2,37 @@ package com.revature.views;
 
 import java.util.Scanner;
 
-import com.revature.controller.UserController;
+import com.revature.entities.UserAccountsDao;
 import com.revature.models.UserAccount;
+import com.revature.utilities.ConnectionUtil;
 
 public class UserPage {
 	MainPage mainPage = new MainPage();
-	UserController userCtrl = new UserController();
 
 	public void runUserPage(String userName) {
-		UserAccount user = userCtrl.getUser(userName);
+		UserAccount user = getUser(userName);
 		System.out.println("\nWelcome " + user.getFirstName() + " !");
 		int choice = 0;
-		while (choice != 3) {
-			System.out.println("1. Show User Info:\n2. Show Accounts\n3. LogOut");
+		while (choice != 4) {
+			System.out.println("1. Show User Info:\n2. Show Accounts\n3. Apply New Bank Account\n4. LogOut");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
 			try {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-					choice = 3;
-					userCtrl.showUserInfo(user);
+					choice = 4;
+					user.showUserInfo();
 					break;
 				case 2:
-					choice = 3;
-					userCtrl.showUserBankAccounts(user);
+					choice = 4;
+					user.showUserBankAccounts();
 					break;
 				case 3:
+					choice = 4;
+					user.createPendingAccount();
+					break;
+				case 4:
 					System.out.println("Successfully Logged Out");
 					mainPage.openingPage(0);
 					scan.close();
@@ -54,13 +58,13 @@ public class UserPage {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-					userCtrl.depositAmount(account);
+					account.depositAmount();
 					break;
 				case 2:
-					userCtrl.withdrawAmount(account);
+					account.withdrawAmount();
 					break;
 				case 3:
-					userCtrl.transferAmount(account);
+					account.transferAmount();
 					break;
 				case 4:
 					runUserPage(account.getUserName());
@@ -74,5 +78,13 @@ public class UserPage {
 				runUserPage(account.getUserName());
 			}
 		}
+	}
+	
+	public UserAccount getUser(String Username) {
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
+		UserAccount curUser = userDao.getUser(Username);
+		connectionUtil.close();
+		return curUser;
 	}
 }

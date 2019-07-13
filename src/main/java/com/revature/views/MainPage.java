@@ -15,7 +15,7 @@ public class MainPage {
 
 	public void openingPage(int choice) {
 		while (choice != 3) {
-			System.out.println("Banking App Project 0");
+			System.out.println("\nBanking App Project 0");
 			System.out.println("Menu");
 			System.out.println("1. Log In \n2. Sign Up \n3. Exit");
 			System.out.print("Choice:");
@@ -24,15 +24,16 @@ public class MainPage {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-
+					choice = 3;
 					LogInPage theLogin = new LogInPage();
 					theLogin.runLogIn();
-					choice = 3;
+					
 					break;
 				case 2:
-
-					System.out.println("Sign Up");
 					choice = 3;
+					SignUpPage theSignUp = new SignUpPage();
+					theSignUp.handleSignUp();
+					
 					break;
 				case 3:
 					scan.close();
@@ -42,7 +43,8 @@ public class MainPage {
 					System.out.println("Invalid Input. Please Try Again. \n");
 				}
 			} catch (Exception ex) {
-				System.out.println("Invalid Input. Please Try Again. \n");
+				//System.out.println("Invalid Input. Please Try Again. \n");
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -52,7 +54,7 @@ public class MainPage {
 		if (user.getUserType().equals("ADMIN")) {
 			adminMain(user);
 		} else if (user.getUserType().equals("EMPLOYEE")) {
-			employeeMain(user);
+			//employeeMain(user);
 		}
 	}
 
@@ -96,37 +98,6 @@ public class MainPage {
 		}
 	}
 
-	public void employeeMain(Employee user) {
-		int choice = 0;
-		while (choice != 3) {
-			System.out.println("1. Show User List:\n2. Pending Account Management\n3.Log Out");
-			System.out.print("Choice: ");
-			Scanner scan = new Scanner(System.in);
-			if (scan.hasNextInt()) {
-				choice = scan.nextInt();
-				switch (choice) {
-				case 1:
-					choice = 3;
-					System.out.println("Show User List");
-					mainCtrl.showUserList(user);
-					break;
-				case 2:
-					choice = 3;
-					System.out.println("Accept/Deny Pending Accounts");
-					mainCtrl.managePendingAccounts(user);
-					break;
-				case 3:
-					System.out.println("Successfully Logged Out");
-					openingPage(0);
-					scan.close();
-					break;
-				default:
-					System.out.println("Invalid Input \n\n");
-				}
-			} else {
-				System.out.println("Invalid Input \n\n");
-			}
-		}
-	}
+	
 
 }

@@ -49,7 +49,47 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			ex.printStackTrace();
 		}
 		System.out.println("Success");
+	}
 
+	public void insertPerson(UserAccount e) {
+		// for person table
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"insert into persons(firstname, lastname, phonenumber, username) values(?, ?, ?, ?)");
+			pStatement.setString(1, e.getFirstName());
+			pStatement.setString(2, e.getLastName());
+			pStatement.setString(3, e.getPhoneNumber());
+			pStatement.setString(4, e.getUserName());
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		// for accountcredentialstable
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("insert into accountcredentials(username, password, usertype) values(?, ?, ?)");
+			pStatement.setString(1, e.getUserName());
+			pStatement.setString(2, e.getPassword());
+			pStatement.setString(3, e.getUserType());
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void insertPendingAccount(UserAccount e, String randomAccountNumber, double initDeposit) {
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"insert into pendingbankaccounts(accountnumber, balance, username) values(?, ?, ?)");
+			pStatement.setString(1, randomAccountNumber);
+			pStatement.setDouble(2, initDeposit);
+			pStatement.setString(3, e.getUserName());
+			pStatement.executeUpdate();
+			System.out.println("Success!");
+			System.out.println("Please wait for the account to be accepted.");
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public boolean isValidLogin(String username, String password) {
@@ -123,7 +163,7 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		UserAccount curUser = null;
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from persons join accountcredentials on persons.username = accountcredentials.username join bankaccounts on persons.username = bankaccounts.username where accountcredentials.username = ?");
+					"select * from persons join accountcredentials on persons.username = accountcredentials.username where accountcredentials.username = ?");
 			pStatement.setString(1, curUserName);
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
@@ -132,10 +172,10 @@ public class UserAccountsDao implements Dao<UserAccount> {
 				String phoneNumber = resultSet.getString("phonenumber");
 				String username = resultSet.getString("username");
 				String password = resultSet.getString("password");
-				double balance = resultSet.getDouble("balance");
-				String accountNumber = resultSet.getString("accountnumber");
+				//double balance = resultSet.getDouble("balance");
+				//String accountNumber = resultSet.getString("accountnumber");
 
-				curUser = new UserAccount(firstName, lastName, phoneNumber, username, password, accountNumber, balance);
+				curUser = new UserAccount(firstName, lastName, phoneNumber, username, password);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -165,10 +205,27 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		return bankAccounts;
 	}
 	
+	public boolean checkUserNameIsUsed(String curUserName) {
+		boolean hasDuplicate = false;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where username = ?");
+			pStatement.setString(1, curUserName);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				hasDuplicate = true;
+			}
+			
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return hasDuplicate;
+	}
+
 	public UserAccount getSpecificBankAccount(String curUserName, String curAccountNumber) {
 		UserAccount curUser = null;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where username = ? and accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from bankaccounts where username = ? and accountnumber = ?");
 			pStatement.setString(1, curUserName);
 			pStatement.setString(2, curAccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
@@ -184,11 +241,12 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		}
 		return curUser;
 	}
-	
+
 	public UserAccount getBankAccount(String curAccountNumber) {
 		UserAccount curUser = null;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from bankaccounts where accountnumber = ?");
 			pStatement.setString(1, curAccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {

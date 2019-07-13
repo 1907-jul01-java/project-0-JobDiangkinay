@@ -2,6 +2,7 @@ package com.revature.controller;
 
 import com.revature.entities.UserAccountsDao;
 import com.revature.utilities.ConnectionUtil;
+import com.revature.views.EmployeePage;
 import com.revature.views.MainPage;
 import com.revature.views.UserPage;
 
@@ -28,6 +29,9 @@ public class LogInController {
 			connectionUtil.close();
 			UserPage userPage = new UserPage();
 			userPage.runUserPage(userName);
+		}else if (userType.equals("EMPLOYEE")) {
+			EmployeePage empPage = new EmployeePage();
+			empPage.runEmployeePage(userName);
 		}
 	}
 }

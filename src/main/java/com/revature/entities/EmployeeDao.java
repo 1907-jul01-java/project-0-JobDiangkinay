@@ -42,6 +42,31 @@ public class EmployeeDao implements Dao<Employee> {
 		System.out.println("Success");
 
 	}
+	
+	public void acceptPendingAccount(UserAccount penUser) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("insert into bankaccounts(accountnumber, balance, username) values(?, ?, ?)");
+			pStatement.setString(1, penUser.getAccountNumber());
+			pStatement.setDouble(2, penUser.getBalance());
+			pStatement.setString(3, penUser.getUserName());
+			pStatement.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		deletePendingAccount(penUser.getAccountNumber());
+	}
+	
+	public void deletePendingAccount(String accountnumber) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("delete from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, accountnumber);
+			pStatement.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	@Override
 	public List<Employee> getAll() {
@@ -63,11 +88,31 @@ public class EmployeeDao implements Dao<Employee> {
 				employees.add(employee);
 			}
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		}
 		return employees;
 	}
 	
+	public UserAccount getSpecificPendingAccount(String penaccountNumber) {
+		UserAccount penAccount = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, penaccountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				String accountNumber = resultSet.getString("accountnumber");
+				String userName = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				
+				penAccount = new UserAccount(userName, accountNumber, balance);
+			}
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return penAccount;
+	}
+
 	public Employee getEmployee(String curUserName) {
 		Employee curEmp = null;
 		try {
@@ -92,6 +137,68 @@ public class EmployeeDao implements Dao<Employee> {
 			return curEmp;
 		}
 		return null;
+	}
+	
+	public boolean checkPendingAccountNumber(String accountNumber) {
+		boolean isValid = false;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, accountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				isValid = true;
+			}
+		}catch (Exception ex) {
+			
+		}
+	return isValid;	
+	}
+	
+	public ArrayList<UserAccount> getAllPendingAccounts(){
+		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingbankaccounts");
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String username = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				String accountnumber = resultSet.getString("accountnumber");
+
+				UserAccount pUser = new UserAccount(username, accountnumber, balance);
+				pendingUsers.add(pUser);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return pendingUsers;
+	}
+
+	public ArrayList<UserAccount> getAllBankAccounts() {
+		ArrayList<UserAccount> bankAccounts = new ArrayList<>();
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from persons join accountcredentials on persons.username = accountcredentials.username join bankaccounts on persons.username = bankaccounts.username where usertype = 'USER'");
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String firstName = resultSet.getString("firstname");
+				String lastName = resultSet.getString("lastname");
+				String phoneNumber = resultSet.getString("phonenumber");
+				String username = resultSet.getString("username");
+				String password = resultSet.getString("password");
+				String userType = resultSet.getString("usertype");
+				String accountNumber = resultSet.getString("accountnumber");
+				double balance = resultSet.getDouble("balance");
+
+				UserAccount userAccount = new UserAccount(firstName, lastName, phoneNumber, username, password,
+						accountNumber, balance);
+				bankAccounts.add(userAccount);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return bankAccounts;
 	}
 
 	@Override

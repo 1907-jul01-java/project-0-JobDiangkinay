@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.revature.entities.EmployeeDao;
 import com.revature.entities.UserAccountsDao;
 import com.revature.models.Employee;
 import com.revature.models.UserAccount;
