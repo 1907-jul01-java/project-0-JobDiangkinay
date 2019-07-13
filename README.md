@@ -5,9 +5,6 @@ save the bank accounts and transactions.
 
 # User Stories
 - [x] List
-- [] Each
-- [] User
-- [] Story
 - Customer can apply to open a account.
 - Customer Accounts can view their Personal infos.
 - Customer Account can transfer,withdraw and deposit money to their accounts.
