@@ -29,12 +29,9 @@ public class LogInController {
 			connectionUtil.close();
 			UserPage userPage = new UserPage();
 			userPage.runUserPage(userName);
-		}else if (userType.equals("EMPLOYEE")) {
+		}else {
 			EmployeePage empPage = new EmployeePage();
 			empPage.runEmployeePage(userName);
-		}else if (userType.equals("ADMIN")) {
-			EmployeePage empPage = new EmployeePage();
-			empPage.runAdminPage(userName);
 		}
 	}
 }

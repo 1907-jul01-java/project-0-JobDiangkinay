@@ -112,6 +112,26 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 		return penAccount;
 	}
+	
+	public UserAccount getSpecificBankAccount(String bankAccountNumber) {
+		UserAccount bankAccount = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from bankaccounts where accountnumber = ?");
+			pStatement.setString(1, bankAccountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				String accountNumber = resultSet.getString("accountnumber");
+				String userName = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				
+				bankAccount = new UserAccount(userName, accountNumber, balance);
+			}
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return bankAccount;
+	}
 
 	public Employee getEmployee(String curUserName) {
 		Employee curEmp = null;
@@ -144,6 +164,22 @@ public class EmployeeDao implements Dao<Employee> {
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
 					"select * from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, accountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				isValid = true;
+			}
+		}catch (Exception ex) {
+			
+		}
+	return isValid;	
+	}
+	
+	public boolean checkBankAccountNumber(String accountNumber) {
+		boolean isValid = false;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from bankaccounts where accountnumber = ?");
 			pStatement.setString(1, accountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
 			while(resultSet.next()) {
@@ -228,7 +264,17 @@ public class EmployeeDao implements Dao<Employee> {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-
+	}
+	
+	public void deleteBankAccount(String accountNumber) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("delete from bankaccounts where accountnumber = ?");
+			pStatement.setString(1, accountNumber);
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }
