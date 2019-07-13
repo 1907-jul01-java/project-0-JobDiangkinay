@@ -32,6 +32,9 @@ public class LogInController {
 		}else if (userType.equals("EMPLOYEE")) {
 			EmployeePage empPage = new EmployeePage();
 			empPage.runEmployeePage(userName);
+		}else if (userType.equals("ADMIN")) {
+			EmployeePage empPage = new EmployeePage();
+			empPage.runAdminPage(userName);
 		}
 	}
 }

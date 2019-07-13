@@ -151,6 +151,13 @@ public class UserAccount extends Person implements IUserAccount{
 			String desAccountNum = scan.nextLine();
 			UserAccount desAccount = userDao.getBankAccount(desAccountNum);
 			double desAccountBalance = desAccount.getBalance();
+			if (curAccount.getAccountNumber().equals(desAccount.getAccountNumber())) {
+				System.out.println("Invalid Transaction! Same AccountNumber\n");
+				pressContinue();
+				connectionUtil.close();
+				UserPage userMenu = new UserPage();
+				userMenu.runUserPage(curAccount.getUserName());
+			}
 			System.out.println("Enter amount:");
 			double depAmount = scan.nextDouble();
 			String trystring = String.format("%.2f", depAmount);

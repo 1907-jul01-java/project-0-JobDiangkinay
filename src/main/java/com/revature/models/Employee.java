@@ -72,7 +72,7 @@ public class Employee extends Person {
 			System.out.println("Bank Accounts:");
 			for (UserAccount bankAcc : userAccounts) {
 				System.out.println("Account Number: " + bankAcc.getAccountNumber() + "\tBalance: "
-						+ bankAcc.getBalance() + "\t\tName: " + bankAcc.getFirstName() + " " + bankAcc.getLastName()
+						+ bankAcc.getBalance() + "\t\tOwner: " + bankAcc.getFirstName() + " " + bankAcc.getLastName()
 						+ "\tUserName: " + bankAcc.getUserName() + "\tPhone#: " + bankAcc.getPhoneNumber());
 			}
 			pressContinue();
