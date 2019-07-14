@@ -3,6 +3,7 @@ drop table if exists Persons;
 drop table if exists BankAccounts;
 drop table if exists PendingBankAccounts;
 drop table if exists PendingJointAccounts;
+drop table if exists Transactions;
 create table AccountCredentials (
 	credID serial primary key,
 	UserName varchar unique not null,
@@ -33,6 +34,15 @@ create table PendingJointAccounts(
 	AccountNumber char(9) not null,
 	Balance numeric(10,2),
 	UserName varchar not null
+);
+create table Transactions(
+	tID serial primary key,
+	SourceUser varchar not null,
+	SourceAccount char(9) not null,
+	Amount numeric(10,2),
+	TransactionType varchar not null,
+	DestinationAccount char(9),
+	TransactionDate varchar
 );
 insert into AccountCredentials(UserName, Password, UserType) values ('adminjob', 'passjob', 'ADMIN');
 insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Job', 'Diangkinay', '9494909895', 'adminjob');

@@ -2,6 +2,7 @@ package com.revature.models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -94,6 +95,10 @@ public class UserAccount extends Person implements IUserAccount {
 				double finaldoub = Double.parseDouble(trystring);
 				double finBalance = curBalance + finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
+				Date today = new Date();
+				Transaction transact = new Transaction(curAccount.getUserName(), curAccount.getAccountNumber(), null,
+						finaldoub, "DEPOSIT", today);
+				userDao.insertTransaction(transact);
 				System.out.println("Success!");
 			} else {
 				System.out.println("Amount must be greater than 0.");
@@ -122,13 +127,24 @@ public class UserAccount extends Person implements IUserAccount {
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
 			if (curBalance > finaldoub) {
-				double finBalance = curBalance - finaldoub;
-				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
-				System.out.println("Success!");
-				pressContinue();
-				connectionUtil.close();
-				UserPage userMenu = new UserPage();
-				userMenu.runUserPage(curAccount.getUserName());
+				if (finaldoub > 0) {
+					double finBalance = curBalance - finaldoub;
+					userDao.depositAmount(finBalance, curAccount.getAccountNumber());
+					Date today = new Date();
+					Transaction transact = new Transaction(curAccount.getUserName(), curAccount.getAccountNumber(),
+							null, finaldoub, "WITHDRAW", today);
+					userDao.insertTransaction(transact);
+					System.out.println("Success!");
+					pressContinue();
+					connectionUtil.close();
+					UserPage userMenu = new UserPage();
+					userMenu.runUserPage(curAccount.getUserName());
+				} else {
+					System.out.println("Invalid Amount!");
+					connectionUtil.close();
+					UserPage userMenu = new UserPage();
+					userMenu.handleAccountView(curAccount);
+				}
 			} else {
 				System.out.println("Invalid Amount!");
 				connectionUtil.close();
@@ -171,6 +187,10 @@ public class UserAccount extends Person implements IUserAccount {
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
 				double desFinBalance = desAccountBalance + finaldoub;
 				userDao.depositAmount(desFinBalance, desAccount.getAccountNumber());
+				Date today = new Date();
+				Transaction transact = new Transaction(curAccount.getUserName(), curAccount.getAccountNumber(),
+						desAccount.getAccountNumber(), finaldoub, "TRANSFER", today);
+				userDao.insertTransaction(transact);
 				System.out.println("Success!");
 				pressContinue();
 				connectionUtil.close();
@@ -190,7 +210,7 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 
 	}
-	
+
 	public void createJointAccount(UserAccount user) {
 		UserAccount curAccount = user;
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -205,14 +225,13 @@ public class UserAccount extends Person implements IUserAccount {
 				connectionUtil.close();
 				UserPage userMenu = new UserPage();
 				userMenu.handleAccountView(curAccount);
-			}
-			else {
+			} else {
 				System.out.println("Account not found!");
 				connectionUtil.close();
 				UserPage userMenu = new UserPage();
 				userMenu.handleAccountView(curAccount);
 			}
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			System.out.println("Invalid Transaction!");
 			connectionUtil.close();
 			UserPage userMenu = new UserPage();
@@ -308,6 +327,34 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 	}
 
+	public void showTransactions() {
+		UserAccount curAccount = get();
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
+		try {
+			ArrayList<Transaction> allTrans = userDao.getAllTransactions(curAccount.getUserName());
+			if (allTrans.size() > 0) {
+				System.out.println("All Transactions");
+				for (Transaction t : allTrans) {
+					System.out.println(t.toString());
+				}
+				connectionUtil.close();
+				pressContinue();
+				UserPage userMenu = new UserPage();
+				userMenu.runUserPage(curAccount.getUserName());
+			} else {
+				System.out.println("No Transaction.");
+				connectionUtil.close();
+				pressContinue();
+				UserPage userMenu = new UserPage();
+				userMenu.runUserPage(curAccount.getUserName());
+			}
+		} catch (Exception ex) {
+			System.out.println("Invalid Input!");
+			UserPage userMenu = new UserPage();
+			userMenu.runUserPage(curAccount.getUserName());
+		}
+	}
 
 	public String generateRandomChars() {
 		String numbers = "1234567890";
@@ -326,7 +373,8 @@ public class UserAccount extends Person implements IUserAccount {
 			System.out.println("Press Enter to continue...");
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			UserPage userMenu = new UserPage();
+			userMenu.runUserPage(this.getUserName());
 		}
 	}
 

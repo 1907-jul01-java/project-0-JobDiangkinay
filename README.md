@@ -12,8 +12,6 @@ save the bank accounts and transactions.
 - Employee & Admin can accept or deny pending Accounts.
 - Admin can Withdraw, deposit, transfer from all accounts.
 - Admin can cancel an account.
-- Admin creates the employee account.
-
 
 # Instructions
 Insert environment, build, and execution documentation here.

@@ -2,6 +2,7 @@ package com.revature.models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import com.revature.entities.EmployeeDao;
@@ -66,7 +67,7 @@ public class Employee extends Person implements IEmployee {
 		userMenu.runEmployeePage(curUserName);
 	}
 
-	public void showAllBankAccounts() {
+	public void showAllBankAccounts(String userType) {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
@@ -78,15 +79,47 @@ public class Employee extends Person implements IEmployee {
 						+ bankAcc.getBalance() + "\t\tOwner: " + bankAcc.getFirstName() + " " + bankAcc.getLastName()
 						+ "\tUserName: " + bankAcc.getUserName() + "\tPhone#: " + bankAcc.getPhoneNumber());
 			}
-			pressContinue();
-			EmployeePage userMenu = new EmployeePage();
-			userMenu.runEmployeePage(user.getUserName());
+			if (userType.equals("ADMIN")) {
+				handleAccounts();
+			}
+			if (userType.equals("EMPLOYEE")) {
+				pressContinue();
+				EmployeePage userMenu = new EmployeePage();
+				userMenu.runEmployeePage(user.getUserName());
+			}
 
 		} else {
 			System.out.println("No Bank Account Available!");
 			pressContinue();
 			EmployeePage userMenu = new EmployeePage();
 			userMenu.runEmployeePage(user.getUserName());
+		}
+	}
+
+	public void showAllTransaction() {
+		Employee user = get();
+		EmployeePage empPage = new EmployeePage();
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
+		try {
+			ArrayList<Transaction> allTrans = new ArrayList<>();
+			allTrans = empDao.getAllTransactions();
+			if(allTrans.size()>0) {
+			System.out.println("All Transactions:");
+			for (Transaction t: allTrans) {
+				System.out.println(t.toString());
+			}
+			pressContinue();
+			EmployeePage userMenu = new EmployeePage();
+			userMenu.runEmployeePage(user.getUserName());
+			}else {
+				System.out.println("No Transaction");
+				pressContinue();
+				EmployeePage userMenu = new EmployeePage();
+				userMenu.runEmployeePage(user.getUserName());
+			}
+		} catch (Exception ex) {
+
 		}
 	}
 
@@ -140,7 +173,7 @@ public class Employee extends Person implements IEmployee {
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
 		ArrayList<UserAccount> pendingAccounts = empDao.getAllPendingAccounts();
-		if (pendingAccounts.size()>0) {
+		if (pendingAccounts.size() > 0) {
 			System.out.println("\nPending Bank Accounts:");
 			for (UserAccount penBank : pendingAccounts) {
 				System.out.println("Account Number: " + penBank.getAccountNumber() + "\tBalance: "
@@ -154,13 +187,13 @@ public class Employee extends Person implements IEmployee {
 			userMenu.runEmployeePage(user.getUserName());
 		}
 	}
-	
+
 	public void showPendingJointAccounts() {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
 		ArrayList<UserAccount> pendingAccounts = empDao.getAllPendingJointAccounts();
-		if (pendingAccounts.size() >0) {
+		if (pendingAccounts.size() > 0) {
 			System.out.println("\nPending Joint Accounts:");
 			for (UserAccount penBank : pendingAccounts) {
 				System.out.println("Account Number: " + penBank.getAccountNumber() + "\tBalance: "
@@ -219,7 +252,7 @@ public class Employee extends Person implements IEmployee {
 			empPage.runEmployeePage(user.getUserName());
 		}
 	}
-	
+
 	public void handlePendingJointAccounts() {
 		EmployeePage empPage = new EmployeePage();
 		Employee user = get();
@@ -240,7 +273,8 @@ public class Employee extends Person implements IEmployee {
 					String choice = scan.nextLine();
 					switch (choice.toUpperCase()) {
 					case "Y":
-						UserAccount addAccount = new UserAccount(penAccount.getUserName(), mainAccount.getAccountNumber(), mainAccount.getBalance());
+						UserAccount addAccount = new UserAccount(penAccount.getUserName(),
+								mainAccount.getAccountNumber(), mainAccount.getBalance());
 						empDao.acceptPendingJointAccount(addAccount);
 						System.out.println("Account Accepted!");
 						pressContinue();
@@ -304,13 +338,17 @@ public class Employee extends Person implements IEmployee {
 		System.out.println("Enter amount:");
 		try {
 			double depAmount = scan.nextDouble();
-			if(depAmount>0) {
-			String trystring = String.format("%.2f", depAmount);
-			double finaldoub = Double.parseDouble(trystring);
-			double finBalance = curBalance + finaldoub;
-			userDao.depositAmount(finBalance, curAccount.getAccountNumber());
-			System.out.println("Success!");
-			}else {
+			if (depAmount > 0) {
+				String trystring = String.format("%.2f", depAmount);
+				double finaldoub = Double.parseDouble(trystring);
+				double finBalance = curBalance + finaldoub;
+				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
+				Date today = new Date();
+				Transaction transact = new Transaction("ADMIN", curAccount.getAccountNumber(), null, finaldoub,
+						"DEPOSIT", today);
+				userDao.insertTransaction(transact);
+				System.out.println("Success!");
+			} else {
 				System.out.println("Amount must be greater than 0.");
 			}
 			pressContinue();
@@ -324,7 +362,7 @@ public class Employee extends Person implements IEmployee {
 			empMenu.handleAdminAccountView(curAccount, curEmp);
 		}
 	}
-	
+
 	public void withdrawAmount(UserAccount account) {
 		Employee curEmp = get();
 		UserAccount curAccount = account;
@@ -340,6 +378,10 @@ public class Employee extends Person implements IEmployee {
 			if (curBalance > finaldoub) {
 				double finBalance = curBalance - finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
+				Date today = new Date();
+				Transaction transact = new Transaction("ADMIN", curAccount.getAccountNumber(), null, finaldoub,
+						"WITHDRAW", today);
+				userDao.insertTransaction(transact);
 				System.out.println("Success!");
 				pressContinue();
 				connectionUtil.close();
@@ -358,7 +400,7 @@ public class Employee extends Person implements IEmployee {
 			empMenu.handleAdminAccountView(curAccount, curEmp);
 		}
 	}
-	
+
 	public void transferAmount(UserAccount account) {
 		Employee curEmp = get();
 		UserAccount curAccount = account;

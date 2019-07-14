@@ -2,7 +2,7 @@ package com.revature.models.interfaces;
 
 public interface IEmployee {
 
-	public void showAllBankAccounts();
+	public void showAllBankAccounts(String e);
 	
 	public void handleAccounts();
 

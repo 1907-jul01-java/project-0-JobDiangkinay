@@ -13,26 +13,30 @@ public class UserPage {
 		UserAccount user = getUser(userName);
 		System.out.println("\nWelcome " + user.getFirstName() + " !");
 		int choice = 0;
-		while (choice != 4) {
-			System.out.println("1. Show User Info:\n2. Show Accounts\n3. Apply New Bank Account\n4. LogOut");
+		while (choice != 5) {
+			System.out.println("1. Show User Info:\n2. Show Accounts\n3. All Transactions\n4. Apply New Bank Account\n5. LogOut");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
 			try {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-					choice = 4;
+					choice = 5;
 					user.showUserInfo();
 					break;
 				case 2:
-					choice = 4;
+					choice = 5;
 					user.showUserBankAccounts();
 					break;
 				case 3:
-					choice = 4;
-					user.createPendingAccount();
+					choice = 5;
+					user.showTransactions();
 					break;
 				case 4:
+					choice = 5;
+					user.createPendingAccount();
+					break;
+				case 5:
 					System.out.println("Successfully Logged Out");
 					mainPage.openingPage(0);
 					scan.close();

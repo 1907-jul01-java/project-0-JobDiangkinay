@@ -5,9 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.revature.models.Transaction;
 import com.revature.models.UserAccount;
 
 public class UserAccountsDao implements Dao<UserAccount> {
@@ -76,7 +80,23 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			ex.printStackTrace();
 		}
 	}
-	
+
+	public void insertTransaction(Transaction trans) {
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"insert into transactions(sourceuser, sourceaccount, amount, transactiontype, destinationaccount, transactiondate) values(?, ?, ?, ?, ?, ?)");
+			pStatement.setString(1, trans.getUserAccount());
+			pStatement.setString(2, trans.getSourceAccount());
+			pStatement.setDouble(3, trans.getAmount());
+			pStatement.setString(4, trans.getTransactionType());
+			pStatement.setString(5, trans.getDestinationAccount());
+			pStatement.setString(6, trans.getStringDate());
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	public void insertPendingAccount(UserAccount e, String randomAccountNumber, double initDeposit) {
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
@@ -91,7 +111,7 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void insertPendingJointAccount(UserAccount e, double balance, String accountNumber) {
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
@@ -173,6 +193,33 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		}
 		return users;
 	}
+	
+	public ArrayList<Transaction> getAllTransactions(String userName) {
+		Transaction transact;
+		ArrayList<Transaction> allTrans = new ArrayList<>();
+		try {
+			PreparedStatement pStatement = connection.prepareStatement("select * from transactions where sourceuser = ?");
+			pStatement.setString(1, userName);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String sourceUser = resultSet.getString("sourceuser");
+				String sourceAccount = resultSet.getString("sourceaccount");
+				double amount = resultSet.getDouble("amount");
+				String transType = resultSet.getString("transactiontype");
+				String destAccount = resultSet.getString("destinationAccount");
+				String transactiondate = resultSet.getString("transactiondate");
+				Date date1 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").parse(transactiondate);
+				transact = new Transaction(sourceUser, sourceAccount, destAccount, amount, transType, date1);
+				allTrans.add(transact);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return allTrans;
+	}
 
 	public UserAccount getUser(String curUserName) {
 		UserAccount curUser = null;
@@ -217,7 +264,7 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		}
 		return bankAccounts;
 	}
-	
+
 	public boolean checkUserNameIsUsed(String curUserName) {
 		boolean hasDuplicate = false;
 		try {
@@ -227,8 +274,8 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			while (resultSet.next()) {
 				hasDuplicate = true;
 			}
-			
-		}catch (SQLException ex) {
+
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return hasDuplicate;

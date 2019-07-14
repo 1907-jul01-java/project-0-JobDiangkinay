@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.revature.models.Employee;
+import com.revature.models.Transaction;
 import com.revature.models.UserAccount;
 
 public class EmployeeDao implements Dao<Employee> {
@@ -42,7 +46,7 @@ public class EmployeeDao implements Dao<Employee> {
 		System.out.println("Success");
 
 	}
-	
+
 	public void acceptPendingAccount(UserAccount penUser) {
 		try {
 			PreparedStatement pStatement = connection
@@ -51,12 +55,12 @@ public class EmployeeDao implements Dao<Employee> {
 			pStatement.setDouble(2, penUser.getBalance());
 			pStatement.setString(3, penUser.getUserName());
 			pStatement.executeUpdate();
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		deletePendingAccount(penUser.getAccountNumber());
 	}
-	
+
 	public void acceptPendingJointAccount(UserAccount penUser) {
 		try {
 			PreparedStatement pStatement = connection
@@ -65,31 +69,30 @@ public class EmployeeDao implements Dao<Employee> {
 			pStatement.setDouble(2, penUser.getBalance());
 			pStatement.setString(3, penUser.getUserName());
 			pStatement.executeUpdate();
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		deletePendingJointAccount(penUser.getAccountNumber());
 	}
-	
-	
+
 	public void deletePendingAccount(String accountnumber) {
 		try {
 			PreparedStatement pStatement = connection
 					.prepareStatement("delete from pendingbankaccounts where accountnumber = ?");
 			pStatement.setString(1, accountnumber);
 			pStatement.executeUpdate();
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void deletePendingJointAccount(String accountnumber) {
 		try {
 			PreparedStatement pStatement = connection
 					.prepareStatement("delete from pendingjointaccounts where accountnumber = ?");
 			pStatement.setString(1, accountnumber);
 			pStatement.executeUpdate();
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -118,62 +121,88 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 		return employees;
 	}
-	
+
+	public ArrayList<Transaction> getAllTransactions() {
+		Transaction transact;
+		ArrayList<Transaction> allTrans = new ArrayList<>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("select * from transactions");
+			while (resultSet.next()) {
+				String sourceUser = resultSet.getString("sourceuser");
+				String sourceAccount = resultSet.getString("sourceaccount");
+				double amount = resultSet.getDouble("amount");
+				String transType = resultSet.getString("transactiontype");
+				String destAccount = resultSet.getString("destinationAccount");
+				String transactiondate = resultSet.getString("transactiondate");
+				Date date1 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").parse(transactiondate);
+				transact = new Transaction(sourceUser, sourceAccount, destAccount, amount, transType, date1);
+				allTrans.add(transact);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return allTrans;
+	}
+
 	public UserAccount getSpecificPendingAccount(String penaccountNumber) {
 		UserAccount penAccount = null;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingbankaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from pendingbankaccounts where accountnumber = ?");
 			pStatement.setString(1, penaccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				String accountNumber = resultSet.getString("accountnumber");
 				String userName = resultSet.getString("username");
 				double balance = resultSet.getDouble("balance");
-				
+
 				penAccount = new UserAccount(userName, accountNumber, balance);
 			}
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return penAccount;
 	}
-	
+
 	public UserAccount getSpecificPendingJointAccount(String penaccountNumber) {
 		UserAccount penAccount = null;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingjointaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from pendingjointaccounts where accountnumber = ?");
 			pStatement.setString(1, penaccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				String accountNumber = resultSet.getString("accountnumber");
 				String userName = resultSet.getString("username");
 				double balance = resultSet.getDouble("balance");
-				
+
 				penAccount = new UserAccount(userName, accountNumber, balance);
 			}
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return penAccount;
 	}
-	
+
 	public UserAccount getSpecificBankAccount(String bankAccountNumber) {
 		UserAccount bankAccount = null;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from bankaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from bankaccounts where accountnumber = ?");
 			pStatement.setString(1, bankAccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				String accountNumber = resultSet.getString("accountnumber");
 				String userName = resultSet.getString("username");
 				double balance = resultSet.getDouble("balance");
-				
+
 				bankAccount = new UserAccount(userName, accountNumber, balance);
 			}
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return bankAccount;
@@ -204,61 +233,60 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 		return null;
 	}
-	
+
 	public boolean checkPendingAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingbankaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from pendingbankaccounts where accountnumber = ?");
 			pStatement.setString(1, accountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				isValid = true;
 			}
-		}catch (Exception ex) {
-			
+		} catch (Exception ex) {
+
 		}
-	return isValid;	
+		return isValid;
 	}
-	
+
 	public boolean checkPendingJointAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingjointaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from pendingjointaccounts where accountnumber = ?");
 			pStatement.setString(1, accountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
-				
+			while (resultSet.next()) {
+
 				isValid = true;
 			}
-		}catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	return isValid;	
+		return isValid;
 	}
-	
+
 	public boolean checkBankAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from bankaccounts where accountnumber = ?");
+			PreparedStatement pStatement = connection
+					.prepareStatement("select * from bankaccounts where accountnumber = ?");
 			pStatement.setString(1, accountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				isValid = true;
 			}
-		}catch (Exception ex) {
-			
+		} catch (Exception ex) {
+
 		}
-	return isValid;	
+		return isValid;
 	}
-	
-	public ArrayList<UserAccount> getAllPendingAccounts(){
+
+	public ArrayList<UserAccount> getAllPendingAccounts() {
 		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingbankaccounts");
+			PreparedStatement pStatement = connection.prepareStatement("select * from pendingbankaccounts");
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
 				String username = resultSet.getString("username");
@@ -273,12 +301,11 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 		return pendingUsers;
 	}
-	
-	public ArrayList<UserAccount> getAllPendingJointAccounts(){
+
+	public ArrayList<UserAccount> getAllPendingJointAccounts() {
 		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
 		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"select * from pendingjointaccounts");
+			PreparedStatement pStatement = connection.prepareStatement("select * from pendingjointaccounts");
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
 				String username = resultSet.getString("username");
@@ -348,7 +375,7 @@ public class EmployeeDao implements Dao<Employee> {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void deleteBankAccount(String accountNumber) {
 		try {
 			PreparedStatement pStatement = connection

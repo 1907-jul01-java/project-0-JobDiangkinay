@@ -37,7 +37,7 @@ public class EmployeePage {
 					break;
 				case 2:
 					choice = 5;
-					emp.showAllBankAccounts();
+					emp.showAllBankAccounts(emp.getUserType());
 					break;
 				case 3:
 					choice = 5;
@@ -67,7 +67,7 @@ public class EmployeePage {
 		System.out.println("Authorization Level: " + emp.getUserType());
 		int choice = 0;
 		while (choice != 6) {
-			System.out.println("1. Show Admin Info\n2. Show All Bank Accounts\n3. Manage Account"
+			System.out.println("1. Show Admin Info\n2. Show All Bank Accounts\n3. Show Transactions"
 					+ "\n4. Manage Pending Accounts\n5. Manage Pending Joint Accounts\n6. Cancel Accounts\n7. Log Out");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
@@ -78,10 +78,10 @@ public class EmployeePage {
 					emp.showUserInfo();
 					break;
 				case 2:
-					emp.showAllBankAccounts();
+					emp.showAllBankAccounts(emp.getUserType());
 					break;
 				case 3:
-					emp.handleAccounts();
+					emp.showAllTransaction();
 					break;
 				case 4:
 					emp.showPendingAccounts();
