@@ -2,6 +2,7 @@ drop table if exists AccountCredentials;
 drop table if exists Persons;
 drop table if exists BankAccounts;
 drop table if exists PendingBankAccounts;
+drop table if exists PendingJointAccounts;
 create table AccountCredentials (
 	credID serial primary key,
 	UserName varchar unique not null,
@@ -22,6 +23,12 @@ create table BankAccounts (
 	UserName varchar not null
 );
 create table PendingBankAccounts(
+	pbID serial primary key,
+	AccountNumber char(9) not null,
+	Balance numeric(10,2),
+	UserName varchar not null
+);
+create table PendingJointAccounts(
 	pbID serial primary key,
 	AccountNumber char(9) not null,
 	Balance numeric(10,2),

@@ -57,10 +57,36 @@ public class EmployeeDao implements Dao<Employee> {
 		deletePendingAccount(penUser.getAccountNumber());
 	}
 	
+	public void acceptPendingJointAccount(UserAccount penUser) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("insert into bankaccounts(accountnumber, balance, username) values(?, ?, ?)");
+			pStatement.setString(1, penUser.getAccountNumber());
+			pStatement.setDouble(2, penUser.getBalance());
+			pStatement.setString(3, penUser.getUserName());
+			pStatement.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		deletePendingJointAccount(penUser.getAccountNumber());
+	}
+	
+	
 	public void deletePendingAccount(String accountnumber) {
 		try {
 			PreparedStatement pStatement = connection
 					.prepareStatement("delete from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, accountnumber);
+			pStatement.executeUpdate();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void deletePendingJointAccount(String accountnumber) {
+		try {
+			PreparedStatement pStatement = connection
+					.prepareStatement("delete from pendingjointaccounts where accountnumber = ?");
 			pStatement.setString(1, accountnumber);
 			pStatement.executeUpdate();
 		}catch(Exception ex) {
@@ -98,6 +124,26 @@ public class EmployeeDao implements Dao<Employee> {
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
 					"select * from pendingbankaccounts where accountnumber = ?");
+			pStatement.setString(1, penaccountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				String accountNumber = resultSet.getString("accountnumber");
+				String userName = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				
+				penAccount = new UserAccount(userName, accountNumber, balance);
+			}
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return penAccount;
+	}
+	
+	public UserAccount getSpecificPendingJointAccount(String penaccountNumber) {
+		UserAccount penAccount = null;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingjointaccounts where accountnumber = ?");
 			pStatement.setString(1, penaccountNumber);
 			ResultSet resultSet = pStatement.executeQuery();
 			while(resultSet.next()) {
@@ -175,6 +221,23 @@ public class EmployeeDao implements Dao<Employee> {
 	return isValid;	
 	}
 	
+	public boolean checkPendingJointAccountNumber(String accountNumber) {
+		boolean isValid = false;
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingjointaccounts where accountnumber = ?");
+			pStatement.setString(1, accountNumber);
+			ResultSet resultSet = pStatement.executeQuery();
+			while(resultSet.next()) {
+				
+				isValid = true;
+			}
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	return isValid;	
+	}
+	
 	public boolean checkBankAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
@@ -196,6 +259,26 @@ public class EmployeeDao implements Dao<Employee> {
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(
 					"select * from pendingbankaccounts");
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				String username = resultSet.getString("username");
+				double balance = resultSet.getDouble("balance");
+				String accountnumber = resultSet.getString("accountnumber");
+
+				UserAccount pUser = new UserAccount(username, accountnumber, balance);
+				pendingUsers.add(pUser);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return pendingUsers;
+	}
+	
+	public ArrayList<UserAccount> getAllPendingJointAccounts(){
+		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"select * from pendingjointaccounts");
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
 				String username = resultSet.getString("username");

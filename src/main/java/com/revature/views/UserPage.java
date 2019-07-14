@@ -50,8 +50,8 @@ public class UserPage {
 		System.out.println("\nAccount Number: " + account.getAccountNumber());
 		System.out.println("Balance: "+ account.getBalance());
 		int choice = 0;
-		while (choice != 4) {
-			System.out.println("1. Deposit\n2. Withdraw\n3. Transfer\n4. Back to Main Menu");
+		while (choice != 5) {
+			System.out.println("1. Deposit\n2. Withdraw\n3. Transfer\n4. Apply for Joint Account\n5. Back to Main Menu");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
 			try {
@@ -67,6 +67,9 @@ public class UserPage {
 					account.transferAmount();
 					break;
 				case 4:
+					account.createJointAccount(account);
+					break;
+				case 5:
 					runUserPage(account.getUserName());
 					break;
 				default:

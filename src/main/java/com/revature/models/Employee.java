@@ -140,7 +140,7 @@ public class Employee extends Person implements IEmployee {
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
 		ArrayList<UserAccount> pendingAccounts = empDao.getAllPendingAccounts();
-		if (pendingAccounts != null) {
+		if (pendingAccounts.size()>0) {
 			System.out.println("\nPending Bank Accounts:");
 			for (UserAccount penBank : pendingAccounts) {
 				System.out.println("Account Number: " + penBank.getAccountNumber() + "\tBalance: "
@@ -149,6 +149,26 @@ public class Employee extends Person implements IEmployee {
 			handlePendingAccounts();
 		} else {
 			System.out.println("No Bank Account Available!");
+			pressContinue();
+			EmployeePage userMenu = new EmployeePage();
+			userMenu.runEmployeePage(user.getUserName());
+		}
+	}
+	
+	public void showPendingJointAccounts() {
+		Employee user = get();
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
+		ArrayList<UserAccount> pendingAccounts = empDao.getAllPendingJointAccounts();
+		if (pendingAccounts.size() >0) {
+			System.out.println("\nPending Joint Accounts:");
+			for (UserAccount penBank : pendingAccounts) {
+				System.out.println("Account Number: " + penBank.getAccountNumber() + "\tBalance: "
+						+ penBank.getBalance() + "\tUser: " + penBank.getUserName());
+			}
+			handlePendingJointAccounts();
+		} else {
+			System.out.println("No Joint Account Available!");
 			pressContinue();
 			EmployeePage userMenu = new EmployeePage();
 			userMenu.runEmployeePage(user.getUserName());
@@ -180,6 +200,55 @@ public class Employee extends Person implements IEmployee {
 
 					case "N":
 						empDao.deletePendingAccount(penAccount.getAccountNumber());
+						System.out.println("Account Denied!");
+						empPage.runEmployeePage(user.getUserName());
+						break;
+					default:
+						System.out.println("Invalid Choice!");
+						empPage.runEmployeePage(user.getUserName());
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} else {
+				System.out.println("Account Number can't be found!");
+				empPage.runEmployeePage(user.getUserName());
+			}
+		} catch (Exception ex) {
+			System.out.println("Invalid Transaction!");
+			empPage.runEmployeePage(user.getUserName());
+		}
+	}
+	
+	public void handlePendingJointAccounts() {
+		EmployeePage empPage = new EmployeePage();
+		Employee user = get();
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
+		System.out.println("Enter the Account you want to handle:");
+		try {
+			System.out.println("checker");
+			Scanner scan = new Scanner(System.in);
+			String accountNumber = scan.nextLine();
+			System.out.println(accountNumber);
+			boolean isValid = empDao.checkPendingJointAccountNumber(accountNumber);
+			if (isValid) {
+				try {
+					UserAccount penAccount = empDao.getSpecificPendingJointAccount(accountNumber);
+					UserAccount mainAccount = empDao.getSpecificBankAccount(accountNumber);
+					System.out.println("Accept/Deny Account: " + penAccount.getAccountNumber() + " ?(Y/N)");
+					String choice = scan.nextLine();
+					switch (choice.toUpperCase()) {
+					case "Y":
+						UserAccount addAccount = new UserAccount(penAccount.getUserName(), mainAccount.getAccountNumber(), mainAccount.getBalance());
+						empDao.acceptPendingJointAccount(addAccount);
+						System.out.println("Account Accepted!");
+						pressContinue();
+						empPage.runEmployeePage(user.getUserName());
+						break;
+
+					case "N":
+						empDao.deletePendingJointAccount(penAccount.getAccountNumber());
 						System.out.println("Account Denied!");
 						empPage.runEmployeePage(user.getUserName());
 						break;
@@ -235,11 +304,15 @@ public class Employee extends Person implements IEmployee {
 		System.out.println("Enter amount:");
 		try {
 			double depAmount = scan.nextDouble();
+			if(depAmount>0) {
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
 			double finBalance = curBalance + finaldoub;
 			userDao.depositAmount(finBalance, curAccount.getAccountNumber());
 			System.out.println("Success!");
+			}else {
+				System.out.println("Amount must be greater than 0.");
+			}
 			pressContinue();
 			connectionUtil.close();
 			EmployeePage empMenu = new EmployeePage();

@@ -31,6 +31,9 @@ public class SignUpController {
 		if (curUser.getUserName().isEmpty() || curUser.getPassword().isEmpty() || curUser.getFirstName().isEmpty()
 				|| curUser.getLastName().isEmpty() || curUser.getPhoneNumber().isEmpty()) {
 			return true;
+		}else if (curUser.getUserName().indexOf(' ') >= 0 || curUser.getPassword().indexOf(' ') >= 0 || curUser.getFirstName().indexOf(' ') >= 0
+				|| curUser.getLastName().indexOf(' ') >= 0 || curUser.getPhoneNumber().indexOf(' ') >= 0) {
+			return true;
 		}
 
 		return false;

@@ -91,6 +91,21 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			ex.printStackTrace();
 		}
 	}
+	
+	public void insertPendingJointAccount(UserAccount e, double balance, String accountNumber) {
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"insert into pendingjointaccounts(accountnumber, balance, username) values(?, ?, ?)");
+			pStatement.setString(1, accountNumber);
+			pStatement.setDouble(2, balance);
+			pStatement.setString(3, e.getUserName());
+			pStatement.executeUpdate();
+			System.out.println("Success!");
+			System.out.println("Please wait for the transaction to be accepted.");
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	public boolean isValidLogin(String username, String password) {
 		int i = 0;
@@ -172,8 +187,6 @@ public class UserAccountsDao implements Dao<UserAccount> {
 				String phoneNumber = resultSet.getString("phonenumber");
 				String username = resultSet.getString("username");
 				String password = resultSet.getString("password");
-				//double balance = resultSet.getDouble("balance");
-				//String accountNumber = resultSet.getString("accountnumber");
 
 				curUser = new UserAccount(firstName, lastName, phoneNumber, username, password);
 			}

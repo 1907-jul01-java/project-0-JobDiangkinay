@@ -10,7 +10,7 @@ import com.revature.models.interfaces.IUserAccount;
 import com.revature.utilities.ConnectionUtil;
 import com.revature.views.UserPage;
 
-public class UserAccount extends Person implements IUserAccount{
+public class UserAccount extends Person implements IUserAccount {
 	private String userName;
 	private String password;
 	private String accountNumber;
@@ -89,11 +89,15 @@ public class UserAccount extends Person implements IUserAccount{
 		System.out.println("Enter amount:");
 		try {
 			double depAmount = scan.nextDouble();
-			String trystring = String.format("%.2f", depAmount);
-			double finaldoub = Double.parseDouble(trystring);
-			double finBalance = curBalance + finaldoub;
-			userDao.depositAmount(finBalance, curAccount.getAccountNumber());
-			System.out.println("Success!");
+			if (depAmount > 0) {
+				String trystring = String.format("%.2f", depAmount);
+				double finaldoub = Double.parseDouble(trystring);
+				double finBalance = curBalance + finaldoub;
+				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
+				System.out.println("Success!");
+			} else {
+				System.out.println("Amount must be greater than 0.");
+			}
 			pressContinue();
 			connectionUtil.close();
 			UserPage userMenu = new UserPage();
@@ -186,6 +190,35 @@ public class UserAccount extends Person implements IUserAccount{
 		}
 
 	}
+	
+	public void createJointAccount(UserAccount user) {
+		UserAccount curAccount = user;
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
+		Scanner scan = new Scanner(System.in);
+		try {
+			System.out.println("Enter the username of where to join this account: ");
+			String joinUsername = scan.nextLine();
+			UserAccount joinUser = userDao.getUser(joinUsername);
+			if (joinUser != null) {
+				userDao.insertPendingJointAccount(joinUser, user.getBalance(), user.getAccountNumber());
+				connectionUtil.close();
+				UserPage userMenu = new UserPage();
+				userMenu.handleAccountView(curAccount);
+			}
+			else {
+				System.out.println("Account not found!");
+				connectionUtil.close();
+				UserPage userMenu = new UserPage();
+				userMenu.handleAccountView(curAccount);
+			}
+		}catch(Exception ex) {
+			System.out.println("Invalid Transaction!");
+			connectionUtil.close();
+			UserPage userMenu = new UserPage();
+			userMenu.handleAccountView(curAccount);
+		}
+	}
 
 	public void showUserBankAccounts() {
 		UserAccount user = get();
@@ -274,6 +307,7 @@ public class UserAccount extends Person implements IUserAccount{
 			userMenu.runUserPage(curAccount.getUserName());
 		}
 	}
+
 
 	public String generateRandomChars() {
 		String numbers = "1234567890";
