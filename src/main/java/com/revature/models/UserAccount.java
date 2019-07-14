@@ -81,6 +81,9 @@ public class UserAccount extends Person implements IUserAccount {
 		return this;
 	}
 
+	/**
+	 * Deposits amount to the current account
+	 */
 	public void depositAmount() {
 		UserAccount curAccount = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -115,6 +118,9 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 	}
 
+	/**
+	 * Withdraws amount to the current account
+	 */
 	public void withdrawAmount() {
 		UserAccount curAccount = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -159,6 +165,9 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 	}
 
+	/**
+	 * Transfers amount from the current account to the account inputed
+	 */
 	public void transferAmount() {
 		UserAccount curAccount = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -182,6 +191,12 @@ public class UserAccount extends Person implements IUserAccount {
 			double depAmount = scan.nextDouble();
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
+			if(finaldoub <=0) {
+				System.out.println("Invalid Amount!");
+				connectionUtil.close();
+				UserPage userMenu = new UserPage();
+				userMenu.handleAccountView(curAccount);
+			}
 			if (curBalance > finaldoub) {
 				double finBalance = curBalance - finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
@@ -211,6 +226,10 @@ public class UserAccount extends Person implements IUserAccount {
 
 	}
 
+	/**
+	 * Creates a request of a joint account
+	 * @param user instance of the current user
+	 */
 	public void createJointAccount(UserAccount user) {
 		UserAccount curAccount = user;
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -239,6 +258,9 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 	}
 
+	/**
+	 * Shows All the current user's bank accounts
+	 */
 	public void showUserBankAccounts() {
 		UserAccount user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -285,6 +307,9 @@ public class UserAccount extends Person implements IUserAccount {
 		userMenu.runUserPage(curUserName);
 	}
 
+	/**
+	 * Shows information of the current User
+	 */
 	public void showUserInfo() {
 		UserAccount user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -301,6 +326,9 @@ public class UserAccount extends Person implements IUserAccount {
 		userMenu.runUserPage(curUserName);
 	}
 
+	/**
+	 * creates a request to open a new account
+	 */
 	public void createPendingAccount() {
 		UserAccount curAccount = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -327,6 +355,9 @@ public class UserAccount extends Person implements IUserAccount {
 		}
 	}
 
+	/**
+	 * Shows the list of transaction of the current user
+	 */
 	public void showTransactions() {
 		UserAccount curAccount = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();

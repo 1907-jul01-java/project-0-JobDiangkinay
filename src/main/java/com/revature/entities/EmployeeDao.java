@@ -18,6 +18,9 @@ import com.revature.models.UserAccount;
 public class EmployeeDao implements Dao<Employee> {
 	Connection connection;
 
+	/**
+	 * Adds a User to the database
+	 */
 	@Override
 	public void insert(Employee emp) {
 		// for personstable
@@ -47,6 +50,11 @@ public class EmployeeDao implements Dao<Employee> {
 
 	}
 
+	/**
+	 * Adds account to the database then
+	 * removes the account on the pendingList
+	 * @param penUser - account that will be added to the database
+	 */
 	public void acceptPendingAccount(UserAccount penUser) {
 		try {
 			PreparedStatement pStatement = connection
@@ -61,6 +69,11 @@ public class EmployeeDao implements Dao<Employee> {
 		deletePendingAccount(penUser.getAccountNumber());
 	}
 
+	/**
+	 * Adds joint account to the database then
+	 * removes the request on the pendingJointList
+	 * @param penUser
+	 */
 	public void acceptPendingJointAccount(UserAccount penUser) {
 		try {
 			PreparedStatement pStatement = connection
@@ -97,6 +110,9 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 	}
 
+	/**
+	 * Gets the list of all employees
+	 */
 	@Override
 	public List<Employee> getAll() {
 		Employee employee;
@@ -122,6 +138,10 @@ public class EmployeeDao implements Dao<Employee> {
 		return employees;
 	}
 
+	/**
+	 * Gets all the transaction details
+	 * @return a list of transactions
+	 */
 	public ArrayList<Transaction> getAllTransactions() {
 		Transaction transact;
 		ArrayList<Transaction> allTrans = new ArrayList<>();

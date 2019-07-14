@@ -9,11 +9,15 @@ import com.revature.utilities.ConnectionUtil;
 public class UserPage {
 	MainPage mainPage = new MainPage();
 
+	/**
+	 * Runs the user page
+	 * @param userName - the username of the current user
+	 */
 	public void runUserPage(String userName) {
 		UserAccount user = getUser(userName);
-		System.out.println("\nWelcome " + user.getFirstName() + " !");
 		int choice = 0;
 		while (choice != 5) {
+			System.out.println("\nWelcome " + user.getFirstName() + " !");
 			System.out.println("1. Show User Info:\n2. Show Accounts\n3. All Transactions\n4. Apply New Bank Account\n5. LogOut");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
@@ -50,6 +54,10 @@ public class UserPage {
 		}
 	}
 
+	/**
+	 * Method to select what to do in the account.
+	 * @param account - the username of the current user
+	 */
 	public void handleAccountView(UserAccount account) {
 		System.out.println("\nAccount Number: " + account.getAccountNumber());
 		System.out.println("Balance: "+ account.getBalance());

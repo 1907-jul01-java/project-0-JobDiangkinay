@@ -51,6 +51,9 @@ public class Employee extends Person implements IEmployee {
 		return this;
 	}
 
+	/**
+	 * Shows the info of the Current Employee
+	 */
 	public void showUserInfo() {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -67,6 +70,9 @@ public class Employee extends Person implements IEmployee {
 		userMenu.runEmployeePage(curUserName);
 	}
 
+	/**
+	 * Shows All the bank accounts in the database
+	 */
 	public void showAllBankAccounts(String userType) {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -96,9 +102,11 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Shows All the transactions happened in all of the accounts
+	 */
 	public void showAllTransaction() {
 		Employee user = get();
-		EmployeePage empPage = new EmployeePage();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
 		try {
@@ -123,6 +131,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Deletes a active bank account
+	 */
 	public void cancelAccount() {
 		Employee user = get();
 		EmployeePage empPage = new EmployeePage();
@@ -168,6 +179,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Shows all pending accounts
+	 */
 	public void showPendingAccounts() {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -188,6 +202,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Shows All of the current pending joint accounts
+	 */
 	public void showPendingJointAccounts() {
 		Employee user = get();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -208,6 +225,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Handles whether to accept or deny pending accounts
+	 */
 	public void handlePendingAccounts() {
 		EmployeePage empPage = new EmployeePage();
 		Employee user = get();
@@ -253,6 +273,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Handles whether to accept or deny pending joint account request
+	 */
 	public void handlePendingJointAccounts() {
 		EmployeePage empPage = new EmployeePage();
 		Employee user = get();
@@ -303,6 +326,9 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * checks the account to handle
+	 */
 	public void handleAccounts() {
 		Employee user = get();
 		EmployeePage empPage = new EmployeePage();
@@ -328,6 +354,10 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Deposit money to the selected account
+	 * @param account - the account you want to deposit money to.
+	 */
 	public void depositAmount(UserAccount account) {
 		Employee curEmp = get();
 		UserAccount curAccount = account;
@@ -363,6 +393,10 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * Withdraws money to the selected account
+	 * @param account - current account  selected
+	 */
 	public void withdrawAmount(UserAccount account) {
 		Employee curEmp = get();
 		UserAccount curAccount = account;
@@ -401,6 +435,10 @@ public class Employee extends Person implements IEmployee {
 		}
 	}
 
+	/**
+	 * transfers money to the selected account
+	 * @param account - current account  selected
+	 */
 	public void transferAmount(UserAccount account) {
 		Employee curEmp = get();
 		UserAccount curAccount = account;
