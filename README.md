@@ -8,9 +8,13 @@ save the bank accounts and transactions.
 - Customer can apply to open a account.
 - Customer Accounts can view their Personal infos.
 - Customer Account can transfer,withdraw and deposit money to their accounts.
+- Customer Account can request for a joint account.
+- Customer Account can view past transactions.
 - Employee & Admin can view all of User Accounts.
 - Employee & Admin can accept or deny pending Accounts.
-- Admin can Withdraw, deposit, transfer from all accounts.
+- Employee & Admin can accept or deny pending Joint Accounts.
+- Admin can Withdraw, deposit and transfer from all accounts.
+- Admin can view All Transactions.
 - Admin can cancel an account.
 
 # Instructions
