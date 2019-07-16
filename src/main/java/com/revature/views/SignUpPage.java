@@ -30,7 +30,7 @@ public class SignUpPage {
 				UserAccount signUpUser = new UserAccount(firstName, lastName, phoneNumber, userName, password);
 				blankAccount = signCtrl.isFieldEmpty(signUpUser);
 				if(blankAccount) {
-					System.out.println("There is a blank field or Contains Spaces.\n");
+					System.out.println("There is an Invalid Input/Contain spaces.\n");
 					mainPage.openingPage(0);
 				}
 				if(!isValid) {

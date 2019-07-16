@@ -57,17 +57,7 @@ public class UserAccountsDao implements Dao<UserAccount> {
 
 	public void insertPerson(UserAccount e) {
 		// for person table
-		try {
-			PreparedStatement pStatement = connection.prepareStatement(
-					"insert into persons(firstname, lastname, phonenumber, username) values(?, ?, ?, ?)");
-			pStatement.setString(1, e.getFirstName());
-			pStatement.setString(2, e.getLastName());
-			pStatement.setString(3, e.getPhoneNumber());
-			pStatement.setString(4, e.getUserName());
-			pStatement.executeUpdate();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
+		
 		// for accountcredentialstable
 		try {
 			PreparedStatement pStatement = connection
@@ -75,6 +65,17 @@ public class UserAccountsDao implements Dao<UserAccount> {
 			pStatement.setString(1, e.getUserName());
 			pStatement.setString(2, e.getPassword());
 			pStatement.setString(3, e.getUserType());
+			pStatement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(
+					"insert into persons(firstname, lastname, phonenumber, username) values(?, ?, ?, ?)");
+			pStatement.setString(1, e.getFirstName());
+			pStatement.setString(2, e.getLastName());
+			pStatement.setString(3, e.getPhoneNumber());
+			pStatement.setString(4, e.getUserName());
 			pStatement.executeUpdate();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -268,7 +269,7 @@ public class UserAccountsDao implements Dao<UserAccount> {
 	public boolean checkUserNameIsUsed(String curUserName) {
 		boolean hasDuplicate = false;
 		try {
-			PreparedStatement pStatement = connection.prepareStatement("select * from bankaccounts where username = ?");
+			PreparedStatement pStatement = connection.prepareStatement("select * from accountcredentials where username = ?");
 			pStatement.setString(1, curUserName);
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
