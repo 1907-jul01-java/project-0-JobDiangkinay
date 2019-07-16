@@ -34,8 +34,7 @@ public class MainPage {
 					System.out.println("Invalid Input. Please Try Again. \n");
 				}
 			} catch (Exception ex) {
-				//System.out.println("Invalid Input. Please Try Again. \n");
-				ex.printStackTrace();
+				System.out.println("Invalid Input. Please Try Again. \n");
 			}
 		}
 	}

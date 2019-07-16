@@ -88,6 +88,10 @@ public class EmployeeDao implements Dao<Employee> {
 		deletePendingJointAccount(penUser.getAccountNumber());
 	}
 
+	/**
+	 * Deletes the pending account to the database
+	 * @param accountnumber the pending account number
+	 */
 	public void deletePendingAccount(String accountnumber) {
 		try {
 			PreparedStatement pStatement = connection
@@ -99,6 +103,10 @@ public class EmployeeDao implements Dao<Employee> {
 		}
 	}
 
+	/**
+	 * Deletes the pending joint account to the database
+	 * @param accountnumber the pending joint account number
+	 */
 	public void deletePendingJointAccount(String accountnumber) {
 		try {
 			PreparedStatement pStatement = connection
@@ -114,9 +122,9 @@ public class EmployeeDao implements Dao<Employee> {
 	 * Gets the list of all employees
 	 */
 	@Override
-	public List<Employee> getAll() {
+	public ArrayList<Employee> getAll() {
 		Employee employee;
-		List<Employee> employees = new ArrayList<>();
+		ArrayList<Employee> employees = new ArrayList<>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(
@@ -146,8 +154,8 @@ public class EmployeeDao implements Dao<Employee> {
 		Transaction transact;
 		ArrayList<Transaction> allTrans = new ArrayList<>();
 		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select * from transactions");
+			PreparedStatement pStatement = connection.prepareStatement("select * from transactions");
+			ResultSet resultSet =pStatement.executeQuery();
 			while (resultSet.next()) {
 				String sourceUser = resultSet.getString("sourceuser");
 				String sourceAccount = resultSet.getString("sourceaccount");
@@ -168,6 +176,12 @@ public class EmployeeDao implements Dao<Employee> {
 		return allTrans;
 	}
 
+	
+	/**
+	 * To retrieve the data of a specific pending account
+	 * @param penaccountNumber the account number of the pending account
+	 * @return the pending account details
+	 */
 	public UserAccount getSpecificPendingAccount(String penaccountNumber) {
 		UserAccount penAccount = null;
 		try {
@@ -188,6 +202,11 @@ public class EmployeeDao implements Dao<Employee> {
 		return penAccount;
 	}
 
+	/**
+	 * To retrieve the data of a specific pending joint account
+	 * @param penaccountNumber the account number of the pending joint account
+	 * @return the pending joint account details
+	 */
 	public UserAccount getSpecificPendingJointAccount(String penaccountNumber) {
 		UserAccount penAccount = null;
 		try {
@@ -208,6 +227,11 @@ public class EmployeeDao implements Dao<Employee> {
 		return penAccount;
 	}
 
+	/**
+	 * To retrieve the data of a specific bank account
+	 * @param penaccountNumber the account number of the account
+	 * @return the bank account details
+	 */
 	public UserAccount getSpecificBankAccount(String bankAccountNumber) {
 		UserAccount bankAccount = null;
 		try {
@@ -254,6 +278,11 @@ public class EmployeeDao implements Dao<Employee> {
 		return null;
 	}
 
+	/**
+	 * Boolean to check if the account number is existing.
+	 * @param accountNumber to check in the database
+	 * @return a boolean value
+	 */
 	public boolean checkPendingAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
@@ -270,6 +299,12 @@ public class EmployeeDao implements Dao<Employee> {
 		return isValid;
 	}
 
+	
+	/**
+	 * Boolean to check if the account number is existing.
+	 * @param accountNumber to check in the database
+	 * @return a boolean value
+	 */
 	public boolean checkPendingJointAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
@@ -287,6 +322,11 @@ public class EmployeeDao implements Dao<Employee> {
 		return isValid;
 	}
 
+	/**
+	 * Boolean to check if the account number is existing.
+	 * @param accountNumber to check in the database
+	 * @return a boolean value
+	 */
 	public boolean checkBankAccountNumber(String accountNumber) {
 		boolean isValid = false;
 		try {
@@ -303,6 +343,10 @@ public class EmployeeDao implements Dao<Employee> {
 		return isValid;
 	}
 
+	/**
+	 * Retrieves all the pending bank accounts
+	 * @return a list of pending accounts
+	 */
 	public ArrayList<UserAccount> getAllPendingAccounts() {
 		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
 		try {
@@ -322,6 +366,11 @@ public class EmployeeDao implements Dao<Employee> {
 		return pendingUsers;
 	}
 
+	
+	/**
+	 * Retrieves all the pending joint bank accounts
+	 * @return a list of pending accounts
+	 */
 	public ArrayList<UserAccount> getAllPendingJointAccounts() {
 		ArrayList<UserAccount> pendingUsers = new ArrayList<>();
 		try {

@@ -134,7 +134,7 @@ public class Employee extends Person implements IEmployee {
 	/**
 	 * Deletes a active bank account
 	 */
-	public void cancelAccount() {
+	public void cancelAccount(UserAccount canAccountNumberTry) {
 		Employee user = get();
 		EmployeePage empPage = new EmployeePage();
 		ConnectionUtil connectionUtil = new ConnectionUtil();
@@ -142,13 +142,13 @@ public class Employee extends Person implements IEmployee {
 		System.out.println("Enter Account Number: ");
 		try {
 			Scanner scan = new Scanner(System.in);
-			String canAccountNumber = scan.nextLine();
+			String canAccountNumber = canAccountNumberTry.getAccountNumber();
 			boolean isValid = empDao.checkBankAccountNumber(canAccountNumber);
 			if (isValid) {
 				UserAccount canAccount = empDao.getSpecificBankAccount(canAccountNumber);
 				if (canAccount.getBalance() > 0) {
 					System.out.println("Balance should be 0!");
-					empPage.runEmployeePage(user.getUserName());
+					empPage.handleAdminAccountView(canAccountNumberTry, user);
 				}
 				System.out.println("Cancel Account: " + canAccount.getAccountNumber() + " ?(Y/N)");
 				String choice = scan.nextLine();
@@ -161,21 +161,21 @@ public class Employee extends Person implements IEmployee {
 					break;
 
 				case "N":
-					System.out.println("Back to Main Menu.");
-					empPage.runEmployeePage(user.getUserName());
+					System.out.println("Back to Menu.");
+					empPage.handleAdminAccountView(canAccountNumberTry, user);
 					break;
 				default:
 					System.out.println("Invalid Choice!");
-					empPage.runEmployeePage(user.getUserName());
+					empPage.handleAdminAccountView(canAccountNumberTry, user);
 				}
 			} else {
 				System.out.println("Account Number can't be found!");
-				empPage.runEmployeePage(user.getUserName());
+				empPage.handleAdminAccountView(canAccountNumberTry, user);
 			}
 
 		} catch (Exception ex) {
 			System.out.println("Invalid Transaction!");
-			empPage.runEmployeePage(user.getUserName());
+			empPage.handleAdminAccountView(canAccountNumberTry, user);
 		}
 	}
 
@@ -283,10 +283,8 @@ public class Employee extends Person implements IEmployee {
 		EmployeeDao empDao = new EmployeeDao(connectionUtil.getConnection());
 		System.out.println("Enter the Account you want to handle:");
 		try {
-			System.out.println("checker");
 			Scanner scan = new Scanner(System.in);
 			String accountNumber = scan.nextLine();
-			System.out.println(accountNumber);
 			boolean isValid = empDao.checkPendingJointAccountNumber(accountNumber);
 			if (isValid) {
 				try {
@@ -380,11 +378,13 @@ public class Employee extends Person implements IEmployee {
 				System.out.println("Success!");
 			} else {
 				System.out.println("Amount must be greater than 0.");
+				EmployeePage empMenu = new EmployeePage();
+				empMenu.handleAdminAccountView(curAccount, curEmp);
 			}
 			pressContinue();
 			connectionUtil.close();
 			EmployeePage empMenu = new EmployeePage();
-			empMenu.runEmployeePage(curEmp.getUserName());
+			empMenu.handleAdminAccountView(curAccount, curEmp);
 		} catch (Exception ex) {
 			System.out.println("Invalid Input!");
 			connectionUtil.close();
@@ -409,7 +409,7 @@ public class Employee extends Person implements IEmployee {
 			double depAmount = scan.nextDouble();
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
-			if (curBalance > finaldoub) {
+			if (curBalance >= finaldoub && finaldoub > 0) {
 				double finBalance = curBalance - finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
 				Date today = new Date();
@@ -420,12 +420,12 @@ public class Employee extends Person implements IEmployee {
 				pressContinue();
 				connectionUtil.close();
 				EmployeePage empMenu = new EmployeePage();
-				empMenu.runEmployeePage(curEmp.getUserName());
+				empMenu.handleAdminAccountView(curAccount, curEmp);
 			} else {
 				System.out.println("Invalid Amount!");
 				connectionUtil.close();
 				EmployeePage empMenu = new EmployeePage();
-				empMenu.runEmployeePage(curEmp.getUserName());
+				empMenu.handleAdminAccountView(curAccount, curEmp);
 			}
 		} catch (Exception ex) {
 			System.out.println("Invalid Input!");
@@ -469,6 +469,10 @@ public class Employee extends Person implements IEmployee {
 				double desFinBalance = desAccountBalance + finaldoub;
 				userDao.depositAmount(desFinBalance, desAccount.getAccountNumber());
 				System.out.println("Success!");
+				Date today = new Date();
+				Transaction transact = new Transaction("ADMIN", curAccount.getAccountNumber(), desAccount.getAccountNumber(), finaldoub,
+						"TRANSFER", today);
+				userDao.insertTransaction(transact);
 				pressContinue();
 				connectionUtil.close();
 				EmployeePage empMenu = new EmployeePage();

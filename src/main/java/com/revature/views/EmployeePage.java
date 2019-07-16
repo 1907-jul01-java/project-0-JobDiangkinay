@@ -3,6 +3,7 @@ package com.revature.views;
 import java.util.Scanner;
 
 import com.revature.entities.EmployeeDao;
+import com.revature.entities.UserAccountsDao;
 import com.revature.models.Employee;
 import com.revature.models.UserAccount;
 import com.revature.utilities.ConnectionUtil;
@@ -68,7 +69,7 @@ public class EmployeePage {
 		int choice = 0;
 		while (choice != 6) {
 			System.out.println("1. Show Admin Info\n2. Show All Bank Accounts\n3. Show Transactions"
-					+ "\n4. Manage Pending Accounts\n5. Manage Pending Joint Accounts\n6. Cancel Accounts\n7. Log Out");
+					+ "\n4. Manage Pending Accounts\n5. Manage Pending Joint Accounts\n6. Log Out");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
 			try {
@@ -87,13 +88,9 @@ public class EmployeePage {
 					emp.showPendingAccounts();
 					break;
 				case 5:
-					choice = 5;
 					emp.showPendingJointAccounts();
 					break;
 				case 6:
-					emp.cancelAccount();
-					break;
-				case 7:
 					System.out.println("Successfully Logged Out");
 					mainPage.openingPage(0);
 					scan.close();
@@ -108,25 +105,30 @@ public class EmployeePage {
 	}
 
 	public void handleAdminAccountView(UserAccount account, Employee curUser) {
-		System.out.println("\nAccount Number: " + account.getAccountNumber());
+		UserAccount accountHandle = getAccount(account.getAccountNumber());
+		System.out.println("\nAccount Number: " + accountHandle.getAccountNumber());
+		System.out.println("Balance: " + accountHandle.getBalance());
 		int choice = 0;
 		while (choice != 4) {
-			System.out.println("1. Deposit\n2. Withdraw\n3. Transfer\n4. Back to Main Menu");
+			System.out.println("1. Deposit\n2. Withdraw\n3. Transfer\n4. Cancel Account\n5. Back to Main Menu");
 			System.out.print("Choice: ");
 			Scanner scan = new Scanner(System.in);
 			try {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-					curUser.depositAmount(account);
+					curUser.depositAmount(accountHandle);
 					break;
 				case 2:
-					curUser.withdrawAmount(account);
+					curUser.withdrawAmount(accountHandle);
 					break;
 				case 3:
-					curUser.transferAmount(account);
+					curUser.transferAmount(accountHandle);
 					break;
 				case 4:
+					curUser.cancelAccount(accountHandle);
+					break;
+				case 5:
 					runEmployeePage(curUser.getUserName());
 					break;
 				default:
@@ -146,5 +148,13 @@ public class EmployeePage {
 		Employee curEmp = empDao.getEmployee(Username);
 		connectionUtil.close();
 		return curEmp;
+	}
+	
+	public UserAccount getAccount(String curAccountNumber) {
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
+		UserAccount curAccount = userDao.getBankAccount(curAccountNumber);
+		connectionUtil.close();
+		return curAccount;
 	}
 }

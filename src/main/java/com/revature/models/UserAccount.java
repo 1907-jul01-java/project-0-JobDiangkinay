@@ -109,7 +109,7 @@ public class UserAccount extends Person implements IUserAccount {
 			pressContinue();
 			connectionUtil.close();
 			UserPage userMenu = new UserPage();
-			userMenu.runUserPage(curAccount.getUserName());
+			userMenu.handleAccountView(curAccount);
 		} catch (Exception ex) {
 			System.out.println("Invalid Input!");
 			connectionUtil.close();
@@ -132,7 +132,7 @@ public class UserAccount extends Person implements IUserAccount {
 			double depAmount = scan.nextDouble();
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
-			if (curBalance > finaldoub) {
+			if (curBalance >= finaldoub) {
 				if (finaldoub > 0) {
 					double finBalance = curBalance - finaldoub;
 					userDao.depositAmount(finBalance, curAccount.getAccountNumber());
@@ -144,7 +144,7 @@ public class UserAccount extends Person implements IUserAccount {
 					pressContinue();
 					connectionUtil.close();
 					UserPage userMenu = new UserPage();
-					userMenu.runUserPage(curAccount.getUserName());
+					userMenu.handleAccountView(curAccount);
 				} else {
 					System.out.println("Invalid Amount!");
 					connectionUtil.close();
@@ -185,7 +185,7 @@ public class UserAccount extends Person implements IUserAccount {
 				pressContinue();
 				connectionUtil.close();
 				UserPage userMenu = new UserPage();
-				userMenu.runUserPage(curAccount.getUserName());
+				userMenu.handleAccountView(curAccount);
 			}
 			System.out.println("Enter amount:");
 			double depAmount = scan.nextDouble();
@@ -210,7 +210,7 @@ public class UserAccount extends Person implements IUserAccount {
 				pressContinue();
 				connectionUtil.close();
 				UserPage userMenu = new UserPage();
-				userMenu.runUserPage(curAccount.getUserName());
+				userMenu.handleAccountView(curAccount);
 			} else {
 				System.out.println("Invalid Amount!");
 				connectionUtil.close();
@@ -276,7 +276,7 @@ public class UserAccount extends Person implements IUserAccount {
 		try {
 			if (bankAccounts.size() > 0) {
 				Scanner scan = new Scanner(System.in);
-				System.out.println("Choose Account to handle:");
+				System.out.println("Input List Number of Account to handle:");
 				int i = scan.nextInt();
 				UserAccount accountToHandle = bankAccounts.get(i - 1);
 				if (accountToHandle != null) {

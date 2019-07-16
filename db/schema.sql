@@ -45,20 +45,20 @@ create table Transactions(
 	TransactionDate varchar
 );
 insert into AccountCredentials(UserName, Password, UserType) values ('adminjob', 'passjob', 'ADMIN');
-insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Job', 'Diangkinay', '9494909895', 'adminjob');
+insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Juan', 'Fabros', '9494909895', 'adminjob');
 
 insert into AccountCredentials(UserName, Password, UserType) values ('empkeith', 'passkeith', 'EMPLOYEE');
-insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Keith', 'Torres', '9494909894', 'empkeith');
+insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Ann', 'Altovar', '9494909894', 'empkeith');
 
 insert into AccountCredentials(UserName, Password, UserType) values ('empjob', 'passjob', 'EMPLOYEE');
 insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('JobEmp', 'DiangkinayEmp', '9494909895', 'empjob');
 
 insert into AccountCredentials(UserName, Password, UserType) values ('userjob', 'passjob', 'USER');
-insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('JobUser', 'DiangkinayUser', '9494909895', 'userjob');
+insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Job', 'Diangkinay', '9494909895', 'userjob');
 insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456789', 500, 'userjob');
 insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456787', 1500, 'userjob');
 insert into PendingBankAccounts(AccountNumber, Balance, UserName) values ('123456786', 1000, 'userjob');
 
 insert into AccountCredentials(UserName, Password, UserType) values ('userkeith', 'passuserkeith', 'USER');
-insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('KeithUser', 'TorresUser', '9052875395', 'userkeith');
+insert into Persons(FirstName, LastName, PhoneNumber, UserName) values ('Keith', 'Torres', '9052875395', 'userkeith');
 insert into BankAccounts(AccountNumber, Balance, UserName) values ('123456788', 500, 'userkeith');

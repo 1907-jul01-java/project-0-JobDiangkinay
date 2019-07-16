@@ -59,8 +59,9 @@ public class UserPage {
 	 * @param account - the username of the current user
 	 */
 	public void handleAccountView(UserAccount account) {
-		System.out.println("\nAccount Number: " + account.getAccountNumber());
-		System.out.println("Balance: "+ account.getBalance());
+		UserAccount user = getUserAccount(account.getUserName(), account.getAccountNumber());
+		System.out.println("\nAccount Number: " + user.getAccountNumber());
+		System.out.println("Balance: "+ user.getBalance());
 		int choice = 0;
 		while (choice != 5) {
 			System.out.println("1. Deposit\n2. Withdraw\n3. Transfer\n4. Apply for Joint Account\n5. Back to Main Menu");
@@ -70,16 +71,16 @@ public class UserPage {
 				choice = scan.nextInt();
 				switch (choice) {
 				case 1:
-					account.depositAmount();
+					user.depositAmount();
 					break;
 				case 2:
-					account.withdrawAmount();
+					user.withdrawAmount();
 					break;
 				case 3:
-					account.transferAmount();
+					user.transferAmount();
 					break;
 				case 4:
-					account.createJointAccount(account);
+					user.createJointAccount(user);
 					break;
 				case 5:
 					runUserPage(account.getUserName());
@@ -99,6 +100,14 @@ public class UserPage {
 		ConnectionUtil connectionUtil = new ConnectionUtil();
 		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
 		UserAccount curUser = userDao.getUser(Username);
+		connectionUtil.close();
+		return curUser;
+	}
+	
+	public UserAccount getUserAccount(String Username, String AccountNumber) {
+		ConnectionUtil connectionUtil = new ConnectionUtil();
+		UserAccountsDao userDao = new UserAccountsDao(connectionUtil.getConnection());
+		UserAccount curUser = userDao.getSpecificBankAccount(Username, AccountNumber);
 		connectionUtil.close();
 		return curUser;
 	}

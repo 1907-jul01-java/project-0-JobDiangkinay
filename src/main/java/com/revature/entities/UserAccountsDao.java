@@ -169,9 +169,9 @@ public class UserAccountsDao implements Dao<UserAccount> {
 	}
 
 	@Override
-	public List<UserAccount> getAll() {
+	public ArrayList<UserAccount> getAll() {
 		UserAccount user;
-		List<UserAccount> users = new ArrayList<>();
+		ArrayList<UserAccount> users = new ArrayList<>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(
@@ -339,14 +339,6 @@ public class UserAccountsDao implements Dao<UserAccount> {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-		try {
-			PreparedStatement pStatement = connection.prepareStatement("delete from bankaccounts where username = ?");
-			pStatement.setString(1, e);
-			pStatement.executeUpdate();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-
 	}
 
 	@Override
