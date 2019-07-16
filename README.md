@@ -18,7 +18,7 @@ save the bank accounts and transactions.
 - Admin can cancel an account.
 
 # Instructions
-# Build Postgres moviedb
+# Build Postgres projectzero
 Change directory into /db and run:
 >docker build -t projectzero .
 
