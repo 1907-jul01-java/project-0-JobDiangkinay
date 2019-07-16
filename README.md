@@ -18,4 +18,22 @@ save the bank accounts and transactions.
 - Admin can cancel an account.
 
 # Instructions
-Insert environment, build, and execution documentation here.
+# Build Postgres moviedb
+Change directory into /db and run:
+>docker build -t projectzero .
+
+Then run a container:
+>docker run -d -p 5432:5432 projectzero
+
+# Compile, Package, & Execute with Maven
+To compile and execute, run:
+```
+mvn compile
+mvn exec:java
+```
+
+To package an executable jar and execute, run:
+```
+mvn clean package
+java -jar target/project0-1.0-SNAPSHOT.jar
+```
