@@ -197,7 +197,7 @@ public class UserAccount extends Person implements IUserAccount {
 				UserPage userMenu = new UserPage();
 				userMenu.handleAccountView(curAccount);
 			}
-			if (curBalance > finaldoub) {
+			if (curBalance >= finaldoub) {
 				double finBalance = curBalance - finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
 				double desFinBalance = desAccountBalance + finaldoub;
@@ -340,9 +340,17 @@ public class UserAccount extends Person implements IUserAccount {
 			double initDeposit = scan.nextDouble();
 			if (initDeposit >= 50) {
 				String accountNumber = generateRandomChars();
+				UserAccount checkUser = userDao.getBankAccount(accountNumber);
+				if(checkUser == null) {
 				userDao.insertPendingAccount(curAccount, accountNumber, initDeposit);
 				UserPage userMenu = new UserPage();
 				userMenu.runUserPage(curAccount.getUserName());
+				}else {
+					accountNumber = generateRandomChars();
+					userDao.insertPendingAccount(curAccount, accountNumber, initDeposit);
+					UserPage userMenu = new UserPage();
+					userMenu.runUserPage(curAccount.getUserName());
+				}
 			} else {
 				System.out.println("Minimum Amount is $50!");
 				UserPage userMenu = new UserPage();

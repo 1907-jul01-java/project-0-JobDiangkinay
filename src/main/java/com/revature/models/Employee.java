@@ -467,7 +467,7 @@ public class Employee extends Person implements IEmployee {
 			double depAmount = scan.nextDouble();
 			String trystring = String.format("%.2f", depAmount);
 			double finaldoub = Double.parseDouble(trystring);
-			if (curBalance > finaldoub) {
+			if (curBalance >= finaldoub) {
 				double finBalance = curBalance - finaldoub;
 				userDao.depositAmount(finBalance, curAccount.getAccountNumber());
 				double desFinBalance = desAccountBalance + finaldoub;
