@@ -83,7 +83,8 @@ public class Employee extends Person implements IEmployee {
 			for (UserAccount bankAcc : userAccounts) {
 				System.out.println("Account Number: " + bankAcc.getAccountNumber() + "\tBalance: "
 						+ bankAcc.getBalance() + "\t\tOwner: " + bankAcc.getFirstName() + " " + bankAcc.getLastName()
-						+ "\tUserName: " + bankAcc.getUserName() + "\tPhone#: " + bankAcc.getPhoneNumber());
+						+ "\t\tUserName: " + bankAcc.getUserName() + "\tPhone#: " + bankAcc.getPhoneNumber());
+
 			}
 			if (userType.equals("ADMIN")) {
 				handleAccounts();
@@ -112,15 +113,15 @@ public class Employee extends Person implements IEmployee {
 		try {
 			ArrayList<Transaction> allTrans = new ArrayList<>();
 			allTrans = empDao.getAllTransactions();
-			if(allTrans.size()>0) {
-			System.out.println("All Transactions:");
-			for (Transaction t: allTrans) {
-				System.out.println(t.toString());
-			}
-			pressContinue();
-			EmployeePage userMenu = new EmployeePage();
-			userMenu.runEmployeePage(user.getUserName());
-			}else {
+			if (allTrans.size() > 0) {
+				System.out.println("All Transactions:");
+				for (Transaction t : allTrans) {
+					System.out.println(t.toString());
+				}
+				pressContinue();
+				EmployeePage userMenu = new EmployeePage();
+				userMenu.runEmployeePage(user.getUserName());
+			} else {
 				System.out.println("No Transaction");
 				pressContinue();
 				EmployeePage userMenu = new EmployeePage();
@@ -354,6 +355,7 @@ public class Employee extends Person implements IEmployee {
 
 	/**
 	 * Deposit money to the selected account
+	 * 
 	 * @param account - the account you want to deposit money to.
 	 */
 	public void depositAmount(UserAccount account) {
@@ -395,7 +397,8 @@ public class Employee extends Person implements IEmployee {
 
 	/**
 	 * Withdraws money to the selected account
-	 * @param account - current account  selected
+	 * 
+	 * @param account - current account selected
 	 */
 	public void withdrawAmount(UserAccount account) {
 		Employee curEmp = get();
@@ -437,7 +440,8 @@ public class Employee extends Person implements IEmployee {
 
 	/**
 	 * transfers money to the selected account
-	 * @param account - current account  selected
+	 * 
+	 * @param account - current account selected
 	 */
 	public void transferAmount(UserAccount account) {
 		Employee curEmp = get();
@@ -470,8 +474,8 @@ public class Employee extends Person implements IEmployee {
 				userDao.depositAmount(desFinBalance, desAccount.getAccountNumber());
 				System.out.println("Success!");
 				Date today = new Date();
-				Transaction transact = new Transaction("ADMIN", curAccount.getAccountNumber(), desAccount.getAccountNumber(), finaldoub,
-						"TRANSFER", today);
+				Transaction transact = new Transaction("ADMIN", curAccount.getAccountNumber(),
+						desAccount.getAccountNumber(), finaldoub, "TRANSFER", today);
 				userDao.insertTransaction(transact);
 				pressContinue();
 				connectionUtil.close();
